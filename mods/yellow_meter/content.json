@@ -1,0 +1,5 @@
+{
+    "name": "Yellow Meter", 
+    "desc": "Replaces the default tachometer on all cars with the yellow tachometer with a shifting light.",
+    "path": "$GAMEDIR\\data_jp\\flash\\DRIVE\\Race\\"
+}
