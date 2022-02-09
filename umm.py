@@ -12,7 +12,8 @@ class Mod:
     def __init__(self, path):
 
         # Get all of the items in the directory
-        items = os.listdir(path)
+        # Normalise the path to prevent any errors
+        items = os.listdir(os.path.normpath(path))
 
         # Required items: 
         # content (folder containing mod)
@@ -164,8 +165,6 @@ class Manager:
                     # Add file to move list
                     move.append(file)
 
-        print("Move", len(move), "Copy", len(copy))
-
         # Return the updated object, as well
         # as the list of files to delete,
         # move (from backup) and copy (from backup).
@@ -262,10 +261,9 @@ class Manager:
             mfl = self.mfl_add_mod(mfl, mod_path, files_copied, files_backed_up)
 
             # Overwrite the existing file with the new content
-            json.dump(mfl, open(mfl_path, 'w+'))
+            json.dump(mfl, open(mfl_path, 'w+'))     
 
-
-    # uninstall(game: String, mod: String): Void
+    # uninstall(game_path: String, mod_path: String): Void
     # Given the name of a game and a mod installed, 
     # attempts to uninstall the given mod from the
     # game based upon data stored by the manager.
@@ -324,15 +322,45 @@ class Manager:
 
             raise  Exception("ModNotInstalledException")
 
+    # uninstall_all(game_path: String): Void
+    # Given the name of a game, uninstalls all
+    # installed mods based upon data stored by
+    # the manager.
+    def uninstall_all(self, game_path): 
+
+        # Get the path to the mods database json file for the game
+        mfl_path = os.path.join(game_path, 'mm_mods.json')
+
+        # Check for a mods.json file in the game directory
+        if not os.path.isfile(mfl_path):
+
+            # Cannot uninstall mod, no mods json file
+            raise Exception("NoModsJsonFileException")
+
+        # Get the content from the mods json file 
+        mfl = json.load(open(mfl_path))
+
+        # Loop over all of the mods in the mfl
+        for mod_path in mfl['mods']:
+
+            try:
+
+                # Uninstall the selected mod
+                self.uninstall(game_path, mod_path)
+
+            except Exception as e: # Failed to uninstall
+
+                print("Not uninstalled:", mod_path, "reason:", e)
+
 # If we are calling this directly
 if __name__ == '__main__': 
 
     # How to use:
     # Install Mod:
-    # python manager.py install path-to-game path-to-mod
+    # python umm.py install path-to-game path-to-mod
     # 
     # Uninstall Mod:
-    # python manager.py uninstall path-to-game path-to-mod
+    # python umm.py uninstall path-to-game path-to-mod
 
     # Get the command line arguments
     args = sys.argv[1:]
@@ -380,5 +408,5 @@ if __name__ == '__main__':
 
         print("Failed:", e, "error.")
 
-        print("Usage: python manager.py [command] path-to-game path-to-mod")
+        print("Usage: python umm.py [command] path-to-game path-to-mod")
         print("Where command is one of: install, uninstall")
