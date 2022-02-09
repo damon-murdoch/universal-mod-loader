@@ -1,5 +1,0 @@
-{
-    "name": "White Meter", 
-    "desc": "Replaces the default tachometer on all cars with the white tachometer with a shifting light.",
-    "path": "$GAMEDIR\\data_jp\\flash\\DRIVE\\Race\\"
-}

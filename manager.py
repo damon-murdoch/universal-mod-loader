@@ -327,33 +327,58 @@ class Manager:
 # If we are calling this directly
 if __name__ == '__main__': 
 
-    """
-    # Get the folder the script is located in
-    path = os.path.dirname(os.path.realpath(__file__))
+    # How to use:
+    # Install Mod:
+    # python manager.py install path-to-game path-to-mod
+    # 
+    # Uninstall Mod:
+    # python manager.py uninstall path-to-game path-to-mod
 
-    # Get the path for the mods folder
-    mods_path = os.path.join(path, 'Mods')
+    # Get the command line arguments
+    args = sys.argv[1:]
 
-    # If the path is a valid folder
-    if os.path.isdir(mods_path): 
-        
-        # Get all of the folder members
-        list = os.listdir(mods_path)
+    try:
 
-        # Loop over the list items
-        for li in list:
+        # 3 args, excluding filename
+        if len(args) == 3:
 
-            # Create a reference for the mod and add it to the list
-            mod_path = os.path.join(mods_path, li)
+            # Create a new empty manager object
+            manager = Manager()
 
-    else: # No mods folder
+            # Install / Uninstall command
+            command = args[0]
 
-        print("Error! No Folder: ", mods_path)
-    """
+            # Game to install mod for
+            game = args[1]
 
-    # Create a new empty manager object
-    manager = Manager()
+            # Mod to install
+            mod = args[2]
 
-    # Game Path, Mod Path
-    manager.install("D:\\Games\\Arcade\\Wangan Midnight Maximum Tune 5DX+", "C:\\Users\\sirsc\\OneDrive\\Documents\\Repositories\\universal-mod-manager\\Mods\\yellow_meter")
-    manager.uninstall("D:\\Games\\Arcade\\Wangan Midnight Maximum Tune 5DX+", "C:\\Users\\sirsc\\OneDrive\\Documents\\Repositories\\universal-mod-manager\\Mods\\yellow_meter")
+            # Install Mod
+            if command == 'install': 
+
+                # Perform the mod install
+                manager.install(game, mod)
+
+            # Uninstall Mod
+            elif command == 'uninstall': 
+
+                # Perform the mod uninstall
+                manager.uninstall(game, mod)
+
+            else: # Unrecognised command
+
+                # Raise unrecognised command exception
+                raise Exception("Failed: Unrecognised command '" + command + "'.")
+
+        else: # Wrong arguments
+
+            # Raise wrong argument count exception
+            raise Exception("3 arguments required. Number provided:", len(args))
+
+    except Exception as e: # General error catch
+
+        print("Failed:", e, "error.")
+
+        print("Usage: python manager.py [command] path-to-game path-to-mod")
+        print("Where command is one of: install, uninstall")
